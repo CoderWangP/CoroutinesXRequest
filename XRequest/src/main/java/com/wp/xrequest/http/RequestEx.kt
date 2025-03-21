@@ -380,6 +380,35 @@ suspend fun <T1, T2, T3> zip(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
+suspend fun <T1, T2, T3, T4> zip(
+    deferred1: Deferred<ApiResponse<T1>>,
+    deferred2: Deferred<ApiResponse<T2>>,
+    deferred3: Deferred<ApiResponse<T3>>,
+    deferred4: Deferred<ApiResponse<T4>>,
+    block: (T1?, T2?, T3?, T4?, ApiException?) -> Unit
+) {
+    try {
+        val responses = awaitAll(deferred1, deferred2, deferred3, deferred4)
+        if (responses.all { it is ApiResponse.Success && it.code == CodeConstant.RESULT_OK }) {
+            val result = responses.map { (it as ApiResponse.Success).data }
+            block(result[0] as T1, result[1] as T2, result[2] as T3, result[3] as T4, null)
+        } else {
+            val e = findFirstFailureException(responses)
+            block(null, null, null, null, e)
+            throw CancellationException(e)
+        }
+    } catch (e: Throwable) {
+        val exCancel = createCancellationException(e)
+        val cause = exCancel.cause
+        if (cause is ApiException) {
+            block(null, null, null, null, cause)
+        }
+        throw exCancel
+    }
+}
+
+
 private fun findFirstFailureException(responses: List<ApiResponse<Any?>>): ApiException {
     val firstFailureResponse =
         responses.first { it is ApiResponse.Success && it.code != CodeConstant.RESULT_OK || it is ApiResponse.Failure }

@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     val multResponse2 by viewModel.response2.observeAsState()
                     val zipResponse1 by viewModel.zipResponse1.observeAsState()
                     val zipResponse2 by viewModel.zipResponse2.observeAsState()
-                    val requestStatus by viewModel.requestStatus.collectAsStateWithLifecycle()
+                    val requestStatus by viewModel.requestStatus.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current)
                     RequestActionAndContent(modifier = Modifier.padding(innerPadding),
                         singleResponse = singleResponse,
                         multResponse1 = multResponse1,

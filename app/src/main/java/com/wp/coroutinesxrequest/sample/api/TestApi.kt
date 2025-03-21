@@ -3,8 +3,8 @@ package com.wp.coroutinesxrequest.sample.api
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.wp.coroutinesrequest.sample.model.Banner
 import com.wp.coroutinesxrequest.http.HttpRequestManager
+import com.wp.coroutinesxrequest.sample.model.Banner
 import com.wp.xrequest.http.ApiResponse
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
