@@ -209,6 +209,9 @@ fun <T> ApiResponse<T>.getOrThrow(preprocessing: Boolean = true): T {
     }
 }
 
+/**
+ * @param onFailure Better to return Unit if you want to use [checkResponse] api
+ */
 fun <T, R : T> ApiResponse<T>.getOrElse(onFailure: (Throwable) -> R): T {
     return try {
         when (this) {
@@ -418,4 +421,26 @@ private fun findFirstFailureException(responses: List<ApiResponse<Any?>>): ApiEx
         ApiException.ResponseException((firstFailureResponse as ApiResponse.Failure).cause)
     }
     return e
+}
+
+/**
+ * response is null or Unit[getOrElse]
+ */
+inline fun <T> T?.checkResponse(block: T.() -> Unit) {
+    if (this != null && this !is Unit) {
+        block()
+    }
+}
+
+
+fun <T1, T2> checkResponse(t1: T1?, t2: T2?, block: () -> Unit) {
+    if (t1 != null && t1 !is Unit && t2 != null && t2 !is Unit) {
+        block()
+    }
+}
+
+fun <T1, T2, T3> checkResponse(t1: T1?, t2: T2?, t3: T3?, block: () -> Unit) {
+    if (t1 != null && t1 !is Unit && t2 != null && t2 !is Unit && t3 != null && t3 !is Unit) {
+        block()
+    }
 }

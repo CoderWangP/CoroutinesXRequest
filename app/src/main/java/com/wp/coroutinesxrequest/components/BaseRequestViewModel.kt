@@ -26,6 +26,7 @@ open class BaseRequestViewModel : ViewModel() {
         }
     }
 
+
     /**
      * @param requestStatus request status
      */
