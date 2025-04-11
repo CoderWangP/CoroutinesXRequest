@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonObject
 import com.wp.coroutinesxrequest.components.BaseRequestViewModel
-import com.wp.coroutinesxrequest.http.Status
+import com.wp.coroutinesxrequest.components.Status
 import com.wp.coroutinesxrequest.sample.api.API
 import com.wp.coroutinesxrequest.toast
 import com.wp.xrequest.http.asyncRequest
@@ -12,7 +12,7 @@ import com.wp.xrequest.http.exceptionOrNull
 import com.wp.xrequest.http.getOrElse
 import com.wp.xrequest.http.getOrNull
 import com.wp.xrequest.http.launchRequest
-import com.wp.xrequest.http.request
+import com.wp.xrequest.http.jobScope
 import com.wp.xrequest.http.zip
 import com.wp.xrequest.toJson
 import okhttp3.Protocol
@@ -59,7 +59,7 @@ class MainViewModelPlan : BaseRequestViewModel() {
      * 单个请求
      */
     fun requestSingle() {
-        request {
+        jobScope {
             onRequestStatusUpdate(Status.START)
             /*val result = kotlin.runCatching {
                 //throw IllegalStateException("run catching")
@@ -96,7 +96,7 @@ class MainViewModelPlan : BaseRequestViewModel() {
     }
 
     fun requestMultiple() {
-        request {
+        jobScope {
             onRequestStatusUpdate(Status.START)
             val deferred1 = asyncRequest {
                 // delay(5000)
@@ -127,7 +127,7 @@ class MainViewModelPlan : BaseRequestViewModel() {
 
 
     fun requestMultipleZip() {
-        request {
+        jobScope {
             onRequestStatusUpdate(Status.START)
             /*         val deferred1 = asyncRequest {
                          API.banners4JsonParseException()
@@ -150,7 +150,7 @@ class MainViewModelPlan : BaseRequestViewModel() {
     }
 
     fun requestException() {
-        request {
+        jobScope {
             //val await1 = myAsync2 { API.question2() }
             val await2 = launchRequest { API.banners4JsonParseException() }
             //val result1 = await1.getORThrow()

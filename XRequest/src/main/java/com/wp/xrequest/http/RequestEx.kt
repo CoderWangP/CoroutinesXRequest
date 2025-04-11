@@ -28,21 +28,21 @@ const val TAG = "RequestEx"
 
 val jobStore: ConcurrentHashMap<String, Job> = ConcurrentHashMap()
 
-inline fun ViewModel.request(
+inline fun ViewModel.jobScope(
     tag: String = "",
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
     createJob(tag, viewModelScope, block)
 }
 
-inline fun LifecycleOwner.request(
+inline fun LifecycleOwner.jobScope(
     tag: String = "",
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
     createJob(tag, lifecycleScope, block)
 }
 
-inline fun Application.request(
+inline fun Application.jobScope(
     tag: String = "",
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
@@ -60,7 +60,6 @@ inline fun createJob(
     scope: CoroutineScope,
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
-    Result
     val key = tag.ifEmpty {
         getJobDefaultTag()
     }

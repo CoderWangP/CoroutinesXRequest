@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.wp.coroutinesxrequest.http.Status
+import com.wp.coroutinesxrequest.components.Status
 import com.wp.coroutinesxrequest.sample.MainViewModelPlan
 import com.wp.coroutinesxrequest.ui.theme.CoroutinesXRequestTheme
 

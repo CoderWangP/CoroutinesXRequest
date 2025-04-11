@@ -8,7 +8,7 @@ import com.wp.coroutinesxrequest.sample.api.API
 import com.wp.coroutinesxrequest.toast
 import com.wp.xrequest.http.collectSuccessDataOrNull
 import com.wp.xrequest.http.exception.ApiException
-import com.wp.xrequest.http.request
+import com.wp.xrequest.http.jobScope
 import com.wp.xrequest.toJson
 
 
@@ -25,7 +25,7 @@ class FlowViewModel : BaseRequestViewModel() {
     }
 
     fun requestData() {
-        request {
+        jobScope {
 /*            API.banners4Flow().collectOrThrow {
                 mSingleResponse.value = it.toJson()
             }*/

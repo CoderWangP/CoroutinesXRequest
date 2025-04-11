@@ -1,7 +1,6 @@
 package com.wp.coroutinesxrequest.components
 
 import androidx.lifecycle.ViewModel
-import com.wp.coroutinesxrequest.http.Status
 import com.wp.xrequest.logD
 import kotlinx.coroutines.flow.*
 
@@ -42,4 +41,8 @@ open class BaseRequestViewModel : ViewModel() {
             else -> requestStatus
         }
     }
+}
+
+enum class Status {
+    START, SUCCESS, EMPTY, ERROR, PROGRESS_DIALOG, DISMISS_PROGRESS_DIALOG, NONE
 }
