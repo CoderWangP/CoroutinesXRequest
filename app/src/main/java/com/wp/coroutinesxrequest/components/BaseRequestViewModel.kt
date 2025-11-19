@@ -14,14 +14,16 @@ open class BaseRequestViewModel : ViewModel() {
         const val TAG = "BaseRequestViewModel"
     }
 
-    inline fun <T> T?.checkAndUpdateStatus(responseBackStatus: Status = Status.SUCCESS, block: T.() -> Unit) {
+    inline fun <reified T> Any?.checkAndUpdateStatus(responseBackStatus: Status = Status.SUCCESS, block: (T) -> Unit) {
         if (this == null || this is Unit) {
             logD(TAG,"checkAndUpdateStatus-> T is null = ${this == null} or T is Unit = ${this is Unit}")
             //handle exception but not need exception detail
             onRequestStatusUpdate(Status.ERROR)
         } else {
-            block()
-            onRequestStatusUpdate(responseBackStatus)
+            if(this is T){
+                block((this))
+                onRequestStatusUpdate(responseBackStatus)
+            }
         }
     }
 

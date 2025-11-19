@@ -20,6 +20,7 @@ class SafeCallAdapterFactory : CallAdapter.Factory() {
 
     companion object {
         private const val TAG = "SafeCallAdapterFactory"
+
         @JvmStatic
         fun create(): SafeCallAdapterFactory {
             return SafeCallAdapterFactory()
@@ -40,8 +41,7 @@ class SafeCallAdapterFactory : CallAdapter.Factory() {
         if (getRawType(responseType) != ApiResponse::class.java) {
             return null
         }
-        //对应于ApiResponse<out T> 中的T
-        return object : CallAdapter<Any, Call<Any>> {
+        return object : CallAdapter<Any, Call<*>> {
             override fun responseType(): Type {
                 return responseType
             }
@@ -105,14 +105,12 @@ class SafeCallAdapterFactory : CallAdapter.Factory() {
 
 
         override fun clone(): Call<Any> {
-            return delegate.clone()
+            return SafeCall(delegate)
         }
 
         override fun execute(): Response<Any> {
             return delegate.execute()
         }
-
-
 
         override fun isExecuted(): Boolean {
             return delegate.isExecuted

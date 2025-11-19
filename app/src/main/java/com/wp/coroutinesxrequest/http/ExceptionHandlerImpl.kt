@@ -22,7 +22,7 @@ import kotlin.coroutines.cancellation.CancellationException
 class ExceptionHandlerImpl : IExceptionHandler {
 
     companion object {
-        private const val TAG = "ExceptionHandlerImpl2"
+        private const val TAG = "ExceptionHandlerImpl"
 
         private const val UNAUTHORIZED = 401
         private const val FORBIDDEN = 403
@@ -68,17 +68,21 @@ class ExceptionHandlerImpl : IExceptionHandler {
                         onResponseException(code, errorMsg, preprocessing)
                     }
 
-                    is JsonParseException, is JSONException -> onResponseException(
-                        PARSE_ERROR,
-                        getString(R.string.parse_error),
-                        preprocessing
-                    )
+                    is JsonParseException, is JSONException -> {
+                        logD(TAG, "JsonParseException or JSONException")
+                        onResponseException(
+                            PARSE_ERROR,
+                            getString(R.string.parse_error),
+                            preprocessing
+                        )
+                    }
 
                     is ConnectException -> onResponseException(
                         CONNECT_ERROR,
                         getString(R.string.connect_error),
                         preprocessing
                     )
+
 
                     is SSLHandshakeException -> onResponseException(
                         SSL_HANDSHAKE_ERROR,

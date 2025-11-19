@@ -3,14 +3,11 @@ package com.wp.coroutinesxrequest.http
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.GsonBuilder
 import com.wp.coroutinesxrequest.config.GlobalConfig
-import com.wp.request.http.calladapter.deferred.DeferredCallAdapterFactory
 import com.wp.xrequest.http.calladapter.SafeCallAdapterFactory
-import com.wp.xrequest.http.calladapter.flow.FlowCallAdapterFactory
-import com.wp.xrequest.http.typeadapter.ApiResponseTypeAdapterFactory
+import com.wp.xrequest.http.converter.ApiResponseConverterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.RuntimeException
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
@@ -39,17 +36,18 @@ object HttpRequestManager {
         val rfBuilder = Retrofit
             .Builder()
             .client(builder.build())
-            .addCallAdapterFactory(FlowCallAdapterFactory.create())
-            .addCallAdapterFactory(DeferredCallAdapterFactory.create())
+/*            .addCallAdapterFactory(FlowCallAdapterFactory.create())
+            .addCallAdapterFactory(DeferredCallAdapterFactory.create())*/
             .addCallAdapterFactory(SafeCallAdapterFactory.create())
-            .baseUrl("https://www.wanandroid.com")
+            /*.addCallAdapterFactory(CustomCallAdapterFactory.create())*/
+            .baseUrl("https://www.wanandroid.com"/*"https://api.github.com"*/)
         val gson = GsonBuilder()
-            .registerTypeAdapterFactory(ApiResponseTypeAdapterFactory())
+            /*.registerTypeAdapterFactory(ApiResponseTypeAdapterFactory())*/
             .setLenient()
             .create()
 
-        rfBuilder.addConverterFactory(GsonConverterFactory.create(gson))
-
+        rfBuilder.addConverterFactory(ApiResponseConverterFactory.create(gson))
+        /*rfBuilder.addConverterFactory(GsonConverterFactory.create(gson))*/
         rfBuilder.build()
     }
 

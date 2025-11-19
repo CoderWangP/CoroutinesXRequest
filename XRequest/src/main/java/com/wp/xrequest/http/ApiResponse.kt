@@ -1,6 +1,7 @@
 package com.wp.xrequest.http
 
 sealed class ApiResponse<out T> {
+
     data class Success<T>(
         val data: T,
         val message: String,

@@ -1,6 +1,8 @@
 package com.wp.coroutinesxrequest.sample.model
 
+import androidx.annotation.Keep
 
+@Keep
 data class Banner(
     val desc: String = "",
     val id: String = "",

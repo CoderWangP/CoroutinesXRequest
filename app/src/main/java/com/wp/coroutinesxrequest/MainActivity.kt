@@ -37,19 +37,32 @@ class MainActivity : ComponentActivity() {
         setContent {
             CoroutinesXRequestTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val response4CustomCoroutineScope by viewModel.response4CustomCoroutineScope.observeAsState()
                     val singleResponse by viewModel.singleResponse.observeAsState()
                     val multResponse1 by viewModel.response1.observeAsState()
                     val multResponse2 by viewModel.response2.observeAsState()
                     val zipResponse1 by viewModel.zipResponse1.observeAsState()
                     val zipResponse2 by viewModel.zipResponse2.observeAsState()
-                    val requestStatus by viewModel.requestStatus.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current)
-                    RequestActionAndContent(modifier = Modifier.padding(innerPadding),
+                    val exceptionResponse1 by viewModel.exceptionResponse1.observeAsState()
+                    val exceptionResponse2 by viewModel.exceptionResponse2.observeAsState()
+                    val requestStatus by viewModel.requestStatus.collectAsStateWithLifecycle(
+                        lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+                    )
+                    RequestActionAndContent(
+                        modifier = Modifier
+                            .padding(innerPadding),
+                        response4CustomCoroutineScope = response4CustomCoroutineScope,
                         singleResponse = singleResponse,
                         multResponse1 = multResponse1,
                         multResponse2 = multResponse2,
                         zipResponse1 = zipResponse1,
                         zipResponse2 = zipResponse2,
+                        exceptionResponse1 = exceptionResponse1,
+                        exceptionResponse2 = exceptionResponse2,
                         requestStatus = requestStatus,
+                        onCustomCoroutineScopeClick = {
+                            viewModel.request4CustomCoroutineScope()
+                        },
                         onSingleClick = {
                             viewModel.requestSingle()
                         },
@@ -58,6 +71,9 @@ class MainActivity : ComponentActivity() {
                         },
                         onZipClick = {
                             viewModel.requestMultipleZip()
+                        },
+                        onExceptionClick = {
+                            viewModel.requestException()
                         })
                 }
             }
@@ -73,22 +89,29 @@ fun RequestActionAndContentPreview() {
         multResponse1 = "multResponse1",
         multResponse2 = "multResponse2",
         zipResponse1 = "zipResponse1",
-        zipResponse2 = "zipResponse2"
+        zipResponse2 = "zipResponse2",
+        exceptionResponse1 = "exceptionResponse1",
+        exceptionResponse2 = "exceptionResponse2"
     )
 }
 
 @Composable
 fun RequestActionAndContent(
     modifier: Modifier = Modifier,
+    response4CustomCoroutineScope: String? = "",
     singleResponse: String? = "",
     multResponse1: String? = "",
     multResponse2: String? = "",
     zipResponse1: String? = "",
     zipResponse2: String? = "",
+    exceptionResponse1: String? = "",
+    exceptionResponse2: String? = "",
     requestStatus: Status? = Status.NONE,
+    onCustomCoroutineScopeClick: () -> Unit = {},
     onSingleClick: () -> Unit = {},
     onMultClick: () -> Unit = {},
-    onZipClick: () -> Unit = {}
+    onZipClick: () -> Unit = {},
+    onExceptionClick: () -> Unit = {}
 ) {
 
     Column(
@@ -98,6 +121,27 @@ fun RequestActionAndContent(
             .wrapContentSize(Alignment.TopCenter)
             .verticalScroll(rememberScrollState())
     ) {
+        Button(
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+            onClick = onCustomCoroutineScopeClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Blue,
+                contentColor = Color.White
+            )
+        ) {
+            Text(text = "launch request for custom CoroutineScope")
+        }
+        Text(
+            text = "response data:${requestStatus?.name}",
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+        )
+        Text(
+            text = response4CustomCoroutineScope ?: "",
+            color = Color.Red,
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+        )
+
+
         Button(
             modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
             onClick = onSingleClick,
@@ -173,6 +217,36 @@ fun RequestActionAndContent(
                 .padding(top = 10.dp)
                 .align(alignment = Alignment.CenterHorizontally),
             text = zipResponse2 ?: "",
+            color = Color.Red
+        )
+
+
+        Button(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .align(alignment = Alignment.CenterHorizontally),
+            onClick = onExceptionClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Blue,
+                contentColor = Color.White
+            )
+        ) {
+            Text(text = "exception request")
+        }
+        Text(
+            text = "response data:${requestStatus?.name}",
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+        )
+        Text(
+            text = exceptionResponse1 ?: "",
+            color = Color.Red,
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 10.dp)
+                .align(alignment = Alignment.CenterHorizontally),
+            text = exceptionResponse2 ?: "",
             color = Color.Red
         )
     }

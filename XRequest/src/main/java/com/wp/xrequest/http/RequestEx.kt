@@ -28,6 +28,14 @@ const val TAG = "RequestEx"
 
 val jobStore: ConcurrentHashMap<String, Job> = ConcurrentHashMap()
 
+
+inline fun CoroutineScope.jobScope(
+    tag: String = "",
+    crossinline block: suspend CoroutineScope.() -> Unit
+) {
+    createJob(tag, this, block)
+}
+
 inline fun ViewModel.jobScope(
     tag: String = "",
     crossinline block: suspend CoroutineScope.() -> Unit
@@ -180,6 +188,14 @@ fun <T> ApiResponse<T>.getOrNull(preprocessing: Boolean = true): T? {
     }
 }
 
+
+fun <T> ApiResponse<T>.onFailure(block: (ApiException) -> Unit): ApiResponse<T> {
+    exceptionOrNull()?.let {
+        block(it)
+    }
+    return this
+}
+
 /**
  * if has exception, will cancel top CoroutineScope. Use carefully!!!
  */
@@ -211,7 +227,7 @@ fun <T> ApiResponse<T>.getOrThrow(preprocessing: Boolean = true): T {
 /**
  * @param onFailure Better to return Unit if you want to use [checkResponse] api
  */
-fun <T, R : T> ApiResponse<T>.getOrElse(onFailure: (Throwable) -> R): T {
+fun <T, R : T> ApiResponse<R>.getOrElse(onFailure: (Throwable) -> T): T {
     return try {
         when (this) {
             is ApiResponse.Success -> {
@@ -308,6 +324,12 @@ suspend fun <T> Deferred<ApiResponse<T>>.getOrNull(preprocessing: Boolean = true
         logE(TAG, "Deferred<ApiResponse<T>>.getORThrow -> error = ${e.message}")
         null
     }
+}
+
+
+suspend fun <T> Deferred<ApiResponse<T>>.onFailure(block: (ApiException) -> Unit): Deferred<ApiResponse<T>> {
+    exceptionOrNull()?.let { block(it) }
+    return this
 }
 
 
@@ -425,21 +447,21 @@ private fun findFirstFailureException(responses: List<ApiResponse<Any?>>): ApiEx
 /**
  * response is null or Unit[getOrElse]
  */
-inline fun <T> T?.checkResponse(block: T.() -> Unit) {
+inline fun <T> Any?.checkResponse(block: (T) -> Unit) {
     if (this != null && this !is Unit) {
-        block()
+        block(this as T)
     }
 }
 
 
-fun <T1, T2> checkResponse(t1: T1?, t2: T2?, block: () -> Unit) {
+fun <T1, T2> checkResponse(t1: T1?, t2: T2?, block: (T1, T2) -> Unit) {
     if (t1 != null && t1 !is Unit && t2 != null && t2 !is Unit) {
-        block()
+        block(t1, t2)
     }
 }
 
-fun <T1, T2, T3> checkResponse(t1: T1?, t2: T2?, t3: T3?, block: () -> Unit) {
+fun <T1, T2, T3> checkResponse(t1: T1?, t2: T2?, t3: T3?, block: (T1, T2, T3) -> Unit) {
     if (t1 != null && t1 !is Unit && t2 != null && t2 !is Unit && t3 != null && t3 !is Unit) {
-        block()
+        block(t1, t2, t3)
     }
 }

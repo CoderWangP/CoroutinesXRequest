@@ -2,19 +2,30 @@ package com.wp.coroutinesxrequest.sample
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
 import com.wp.coroutinesxrequest.components.BaseRequestViewModel
 import com.wp.coroutinesxrequest.components.Status
 import com.wp.coroutinesxrequest.sample.api.API
+import com.wp.coroutinesxrequest.sample.api.TestApi
+import com.wp.coroutinesxrequest.sample.model.Banner
 import com.wp.coroutinesxrequest.toast
 import com.wp.xrequest.http.asyncRequest
+import com.wp.xrequest.http.checkResponse
 import com.wp.xrequest.http.exceptionOrNull
 import com.wp.xrequest.http.getOrElse
 import com.wp.xrequest.http.getOrNull
+import com.wp.xrequest.http.getOrThrow
 import com.wp.xrequest.http.launchRequest
 import com.wp.xrequest.http.jobScope
 import com.wp.xrequest.http.zip
+import com.wp.xrequest.logD
+import com.wp.xrequest.logE
 import com.wp.xrequest.toJson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -23,6 +34,10 @@ import retrofit2.Response
 
 
 class MainViewModelPlan : BaseRequestViewModel() {
+    private val _response4CustomCoroutineScope = MutableLiveData<String>()
+    val response4CustomCoroutineScope: LiveData<String> = _response4CustomCoroutineScope
+
+
     private val _singleResponse = MutableLiveData<String>()
     val singleResponse: LiveData<String> = _singleResponse
 
@@ -52,28 +67,55 @@ class MainViewModelPlan : BaseRequestViewModel() {
     }
 
     companion object {
-        private const val TAG = "MainViewModel"
+        private const val TAG = "MainViewModelPlan"
+    }
+
+    fun request4CustomCoroutineScope() {
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.jobScope {
+            val result = launchRequest {
+                API.question2()
+            }.getOrElse {
+                toast(it.message ?: "")
+            }
+            result.checkAndUpdateStatus<JsonObject> {
+                _response4CustomCoroutineScope.value = it.toJson()
+            }
+        }
     }
 
     /**
      * 单个请求
      */
     fun requestSingle() {
+        /*        val method = TestApi::class.java.getDeclaredMethod("question5")
+                val type = method.genericParameterTypes*/
+        /*runBlocking {
+            val result = API.question3()
+            _singleResponse.value = result.toJson()
+        }*/
+
         jobScope {
             onRequestStatusUpdate(Status.START)
-            /*val result = kotlin.runCatching {
-                //throw IllegalStateException("run catching")
-                1 / 0
-            }.getOrElse {
-                logE(TAG,"error = ${it.message}")
-                "aaa"
+            /*val result1 = launchRequest { API.banners4JsonParseException() }
+            val exception = result1.exceptionOrNull()
+            exception?.run {
+                logE(TAG, exception.errorMsg)
+                _singleResponse.value = this.errorMsg ?: ""
             }
-            logD(TAG,"result = $result")*/
+            result1.getOrNull()?.run {
+                _singleResponse.value = this.toJson()
+            }*/
 
-            /*            val result1 = launchRequest { API.question2() }.getOrNull()
-                        result1?.run {
-                            _singleResponse.value = this.toJson()
-                        }*/
+            val result2 = launchRequest { API.banners2() }.getOrThrow()
+            result2.checkAndUpdateStatus<List<Banner>> {
+                _singleResponse.value = it.size.toString() + it.toJson()
+            }
+
+            /*val result1 = API.question3()
+            result1.run {
+                _singleResponse.value = this.toJson()
+            }*/
 
             /*val result2 = launchRequest {
                 API.banners4JsonParseException()
@@ -82,16 +124,17 @@ class MainViewModelPlan : BaseRequestViewModel() {
             }
             result2.checkAndUpdateStatus {
                 _singleResponse.value = this.toJson()
-            }*/
+            }
 
             val result3 = launchRequest {
-                API.question2()
+                API.banners4JsonParseException()
             }.getOrElse {
                 toast(it.message ?: "")
             }
-            result3.checkAndUpdateStatus {
-                _singleResponse.value = this.toJson()
-            }
+            result3.checkAndUpdateStatus<Banner> {
+                _singleResponse.value = it.toJson()
+            }*/
+
         }
     }
 
@@ -119,8 +162,8 @@ class MainViewModelPlan : BaseRequestViewModel() {
             }
 
             val result2 = deferred2.getOrNull()
-            result2?.checkAndUpdateStatus {
-                _response2.value = toJson()
+            result2.checkAndUpdateStatus<MutableList<JsonObject>> {
+                _response2.value = it.toJson()
             }
         }
     }
@@ -128,6 +171,7 @@ class MainViewModelPlan : BaseRequestViewModel() {
 
     fun requestMultipleZip() {
         jobScope {
+
             onRequestStatusUpdate(Status.START)
             /*         val deferred1 = asyncRequest {
                          API.banners4JsonParseException()
@@ -151,18 +195,36 @@ class MainViewModelPlan : BaseRequestViewModel() {
 
     fun requestException() {
         jobScope {
-            //val await1 = myAsync2 { API.question2() }
-            val await2 = launchRequest { API.banners4JsonParseException() }
-            //val result1 = await1.getORThrow()
-            val result2 = await2.getOrNull() /*{
-                _exceptionResponse2.value = it.errorMsg ?: ""
-            }*/
-            /*           result1.responseRun {
-                           _exceptionResponse1.value = toJson()
-                       }*/
-            result2.checkAndUpdateStatus {
-                _exceptionResponse2.value = toJson()
+            logD(TAG, "requestException start")
+            val await1 = asyncRequest { API.question2() }
+            val await2 = asyncRequest { API.banners4JsonParseException() }
+            val result1 = await1.getOrNull()
+            logD(TAG, "requestException result1 end")
+            result1.checkResponse<JsonObject> {
+                _exceptionResponse1.value = it.toJson()
             }
+            try {
+                logD(TAG, "requestException result2 start")
+                val result2 = await2.await()
+                logD(TAG, "requestException result2 end")
+                _exceptionResponse2.value = result2.toJson()
+            } catch (e: Throwable) {
+                logE(TAG, e.message + "error ")
+            }
+
+            /*val result2 = await2.getOrNull()
+            logE(TAG, "result2 = ${result2?.toJson()}")
+            val exception = await2.exceptionOrNull()
+            logE(TAG, "error = ${exception?.errorMsg}")*/
+            /*val result2 = await2
+                .onFailure {
+                    logE(TAG, it.errorMsg)
+                    toast(it.message ?: "")
+                }*/
+            //val result22 = result2.getOrNull(preprocessing = false)
+            /*result2.checkAndUpdateStatus<Banner> {
+
+            }*/
         }
     }
 

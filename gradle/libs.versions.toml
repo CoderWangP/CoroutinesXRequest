@@ -21,6 +21,9 @@ retrofit2Retrofit = "2.11.0"
 retrofit2ConvertGson = "2.11.0"
 gson = "2.12.1"
 
+kotlinxSerializationJson = "1.8.1"
+retrofit2ConvertKotlinxSerialization = "2.11.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -39,19 +42,24 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
-okhttp3-okhttp = {group= "com.squareup.okhttp3",name= "okhttp",version.ref = "okHttp3"}
-kotlinx-coroutines-android = {group= "org.jetbrains.kotlinx",name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid"}
-androidx-lifecycle-viewmodel-ktx = {group="androidx.lifecycle",name="lifecycle-viewmodel-ktx", version.ref = "lifecycleViewModelKtx"}
-retrofit2-retrofit = {group = "com.squareup.retrofit2",name= "retrofit", version.ref = "retrofit2Retrofit"}
-retrofit2-convert-gson = {group = "com.squareup.retrofit2",name = "converter-gson", version.ref = "retrofit2ConvertGson"}
-gson = {group = "com.google.code.gson",name = "gson",version.ref = "gson"}
+okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okHttp3" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewModelKtx" }
+retrofit2-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2Retrofit" }
+retrofit2-convert-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2ConvertGson" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
-stetho = {group = "com.facebook.stetho",name = "stetho", version.ref = "stetho"}
-stetho-okhttp3 = {group = "com.facebook.stetho", name = "stetho-okhttp3", version.ref = "stethoOkhttp3"}
+stetho = { group = "com.facebook.stetho", name = "stetho", version.ref = "stetho" }
+stetho-okhttp3 = { group = "com.facebook.stetho", name = "stetho-okhttp3", version.ref = "stethoOkhttp3" }
+
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+retrofit2-convert-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit2ConvertKotlinxSerialization" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

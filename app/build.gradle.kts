@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -99,4 +100,6 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
     implementation(project(":XRequest"))
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit2.convert.kotlinx.serialization)
 }
