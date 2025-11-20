@@ -164,7 +164,7 @@ inline fun <T> CoroutineScope.asyncRequest(
 
 
 /**
- * 获取ApiResponse<T>中的T，如果有异常(包含业务异常)，返回null
+ * get T in ApiResponse<T>, if has exception(contains business exception) return null
  * [Config.errorHandler] to handle exception
  */
 fun <T> ApiResponse<T>.getOrNull(preprocessing: Boolean = true): T? {
@@ -293,7 +293,7 @@ private fun createCancellationException(e: Throwable): CancellationException {
 }
 
 /**
- * 获取deferred结果ApiResponse<T>
+ * get result of deferred,the result is ApiResponse<T>
  */
 suspend fun <T> Deferred<ApiResponse<T>>.getResponse(): ApiResponse<T> {
     return try {
@@ -304,7 +304,7 @@ suspend fun <T> Deferred<ApiResponse<T>>.getResponse(): ApiResponse<T> {
 }
 
 /**
- * 获取ApiResponse<T>中的T，如果有异常，返回null
+ * get T in ApiResponse<T>, if has exception return null
  */
 suspend fun <T> Deferred<ApiResponse<T>>.getOrNull(preprocessing: Boolean = true): T? {
     return try {
@@ -349,7 +349,7 @@ suspend fun <T> Deferred<ApiResponse<T>>.exceptionOrNull(): ApiException? {
 }
 
 /**
- * 多个请求并行合并
+ * mult request merge
  */
 @Suppress("UNCHECKED_CAST")
 suspend fun <T1, T2> zip(
