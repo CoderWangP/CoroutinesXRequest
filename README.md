@@ -4,7 +4,7 @@
 
 ##### API 写法
 
-    ```kotlin
+    ```Kotlin
     /**
      * 查看banner
      */
